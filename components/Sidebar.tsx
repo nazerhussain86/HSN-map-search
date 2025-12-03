@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, BarChart3, MessageSquare, BookOpen, Menu, X } from 'lucide-react';
+import { Search, BarChart3, MessageSquare, BookOpen, Menu, X, Calculator, FileText, Workflow } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -12,6 +12,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
   const menuItems = [
     { id: 'search', label: 'HSN Search', icon: Search },
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'landed-cost', label: 'Landed Cost', icon: Calculator },
+    { id: 'pdf-tools', label: 'PDF Tools', icon: FileText },
     { id: 'ai-assistant', label: 'AI Assistant', icon: MessageSquare },
     { id: 'guide', label: 'About Guide', icon: BookOpen },
   ];
@@ -35,11 +37,15 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
         `}
       >
         <div className="flex items-center justify-between h-16 px-6 bg-slate-950">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-lg">H</span>
+          <div className="flex items-center space-x-3">
+            {/* Logo Icon */}
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-green-400 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+              <Workflow size={20} />
             </div>
-            <span className="font-bold text-xl tracking-tight">HSN Nav</span>
+            {/* Logo Text */}
+            <span className="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
+              LOGI FLOW
+            </span>
           </div>
           <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
             <X size={24} />
@@ -76,11 +82,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
 
         <div className="absolute bottom-0 w-full p-6 bg-slate-950">
           <div className="flex items-center space-x-3">
-            <img 
-              src="https://picsum.photos/100/100" 
-              alt="GOI Logo" 
-              className="w-10 h-10 rounded-full border-2 border-slate-700"
-            />
+            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 text-xs font-bold text-slate-300">
+              GOI
+            </div>
             <div>
               <p className="text-sm font-medium text-white">Govt of India</p>
               <p className="text-xs text-slate-400">DPIIT Initiative</p>
