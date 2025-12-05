@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, AlertCircle } from 'lucide-react';
 import { ChatMessage } from '../types';
-import { getGeminiResponse } from '../services/geminiService';
+import { getGeminiResponse } from '../geminiService';
 
 const AIAssistant: React.FC = () => {
   const [input, setInput] = useState('');
@@ -79,7 +79,7 @@ const AIAssistant: React.FC = () => {
           <h2 className="font-bold text-slate-800">AI Trade Assistant</h2>
           <p className="text-xs text-slate-500 flex items-center">
             <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
-            Powered by Gemini 2.5
+            Powered by LOGI FLOW
           </p>
         </div>
       </div>

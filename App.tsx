@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
-import SearchPage from './pages/SearchPage';
+import SearchPage from '../SearchPage';
 import Dashboard from './pages/Dashboard';
 import AIAssistant from './pages/AIAssistant';
 import About from './pages/About';
 import LandedCostCalculator from './pages/LandedCostCalculator';
-import PDFTools from './pages/PDFTools';
+//import PDFTools from './pages/PDFTools';
+import ETLProcess from './pages/ETLProcess';
 import { Menu, Workflow } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -25,8 +25,10 @@ const App: React.FC = () => {
         return <Dashboard />;
       case 'landed-cost':
         return <LandedCostCalculator />;
-      case 'pdf-tools':
-        return <PDFTools />;
+      //case 'pdf-tools':
+        //return <PDFTools />;
+      case 'etl-process':
+        return <ETLProcess />;
       case 'ai-assistant':
         return <AIAssistant />;
       case 'guide':
@@ -37,7 +39,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
       {/* Sidebar Navigation */}
       <Sidebar 
         activeTab={activeTab} 
@@ -46,10 +48,11 @@ const App: React.FC = () => {
         setIsMobileOpen={setIsMobileOpen}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* Main Content Wrapper */}
+      <div className="flex-1 flex flex-col min-w-0 h-full relative">
+        
         {/* Mobile Header (Visible only on small screens) */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:hidden flex-shrink-0 z-10">
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:hidden flex-shrink-0 z-10 sticky top-0">
           <div className="flex items-center space-x-2">
              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-green-400 rounded-lg flex items-center justify-center text-white shadow-sm">
               <Workflow size={20} />
@@ -67,9 +70,9 @@ const App: React.FC = () => {
           </button>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
-          <div className="max-w-7xl mx-auto w-full">
+        {/* Scrollable Page Content */}
+        <main className={`flex-1 overflow-y-auto ${activeTab === 'etl-process' ? 'p-0' : 'p-4 lg:p-8'} scroll-smooth`}>
+          <div className={`max-w-7xl mx-auto w-full h-full ${activeTab === 'etl-process' ? '' : 'pb-10'}`}>
             {renderContent()}
           </div>
         </main>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, BarChart3, MessageSquare, BookOpen, Menu, X, Calculator, FileText, Workflow } from 'lucide-react';
+import { Search, BarChart3, MessageSquare, BookOpen, Menu, X, Calculator, FileText, Workflow, Database } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -12,8 +12,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
   const menuItems = [
     { id: 'search', label: 'HSN Search', icon: Search },
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'landed-cost', label: 'Landed Cost', icon: Calculator },
+    { id: 'etl-process', label: 'ETL Process', icon: Database },
     { id: 'pdf-tools', label: 'PDF Tools', icon: FileText },
+    { id: 'landed-cost', label: 'Landed Cost', icon: Calculator },
     { id: 'ai-assistant', label: 'AI Assistant', icon: MessageSquare },
     { id: 'guide', label: 'About Guide', icon: BookOpen },
   ];
@@ -32,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
       <aside 
         className={`
           fixed top-0 left-0 z-30 h-full w-64 bg-slate-900 text-white transition-transform duration-300 ease-in-out
-          lg:translate-x-0 lg:static lg:block
+          lg:translate-x-0 lg:static lg:block flex-shrink-0
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >

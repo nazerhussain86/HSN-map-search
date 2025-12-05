@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
-import { Calculator, CalculatorIcon, Info, Loader2, RefreshCcw, TrendingUp, DollarSign, Truck, Building, Plane, Ship } from 'lucide-react';
-import { getGeminiResponse } from '../services/geminiService';
+import { 
+  Calculator, 
+  Info, 
+  Loader2, 
+  RefreshCcw, 
+  TrendingUp, 
+  DollarSign, 
+  Truck, 
+  Building, 
+  Plane, 
+  Ship, 
+  Package,
+  MapPin,
+  Scale,
+  Search,
+  ArrowRight
+} from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { getGeminiResponse } from '../geminiService';
 
 interface CostBreakdown {
   productCost: number;
@@ -44,7 +61,6 @@ const LandedCostCalculator: React.FC = () => {
     try {
       const prompt = `You are a trade expert. Suggest the most likely 6-digit or 8-digit Harmonized System (HS) code for the product: "${formData.productName}". Return ONLY the code number, nothing else. No explanation.`;
       const response = await getGeminiResponse(prompt);
-      // Clean up response to get just the code
       const code = response.replace(/[^0-9.]/g, '');
       setFormData(prev => ({ ...prev, hsCode: code }));
     } catch (error) {
@@ -58,31 +74,20 @@ const LandedCostCalculator: React.FC = () => {
   const calculateCost = () => {
     setIsCalculating(true);
     
-    // Simulate API delay
     setTimeout(() => {
       const val = parseFloat(formData.value) || 0;
       const qty = parseFloat(formData.quantity) || 1;
       const weight = parseFloat(formData.weight) || 1;
       const totalProductValue = val * qty;
 
-      // Mock calculations logic
-      // In a real app, these rates would come from an API based on HS Code + Origin + Destination
-      const shippingRate = formData.shippingMethod === 'air' ? 5 : 1.5; // $ per kg
+      const shippingRate = formData.shippingMethod === 'air' ? 5 : 1.5;
       const shippingCost = weight * shippingRate;
-      
-      const insuranceCost = totalProductValue * 0.01; // 1% insurance
+      const insuranceCost = totalProductValue * 0.01;
       
       const cif = totalProductValue + shippingCost + insuranceCost;
-      
-      const dutyRate = 0.10; // 10% BCD
-      const basicDuty = cif * dutyRate;
-      
-      const swsRate = 0.10; // 10% SWS on BCD
-      const sws = basicDuty * swsRate;
-      
-      const igstRate = 0.18; // 18% IGST
-      const igst = (cif + basicDuty + sws) * igstRate;
-      
+      const basicDuty = cif * 0.10;
+      const sws = basicDuty * 0.10;
+      const igst = (cif + basicDuty + sws) * 0.18;
       const total = cif + basicDuty + sws + igst;
 
       setResult({
@@ -100,267 +105,187 @@ const LandedCostCalculator: React.FC = () => {
     }, 800);
   };
 
+  const chartData = result ? [
+    { name: 'Product Cost', value: result.productCost, color: '#3b82f6' },
+    { name: 'Shipping', value: result.shipping + result.insurance, color: '#f59e0b' },
+    { name: 'Duties', value: result.basicDuty + result.sws, color: '#ef4444' },
+    { name: 'Taxes', value: result.igst, color: '#10b981' },
+  ] : [];
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-8rem)]">
-      
-      {/* Left Column: Form */}
-      <div className="lg:col-span-7 flex flex-col">
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-y-auto h-full">
-          <div className="p-6 border-b border-slate-100">
-            <h2 className="text-xl font-bold text-slate-900">Product Information</h2>
-            <p className="text-sm text-slate-500 mt-1">Enter your product details to calculate the landed cost</p>
-          </div>
-          
-          <div className="p-6 space-y-6">
-            
-            {/* Product Name */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Product Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="productName"
-                value={formData.productName}
-                onChange={handleInputChange}
-                placeholder="e.g., Wireless Headphones"
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-              />
-            </div>
-
-            {/* Value */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Product Value (USD) <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-                <input
-                  type="number"
-                  name="value"
-                  value={formData.value}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 1000"
-                  className="w-full pl-8 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            {/* HS Code */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                HS Code (Optional)
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  name="hsCode"
-                  value={formData.hsCode}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 8518.30"
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-                <button 
-                  onClick={handleSuggestHSCode}
-                  disabled={isSuggesting || !formData.productName}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 font-medium rounded-lg border border-slate-200 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 whitespace-nowrap"
-                >
-                  {isSuggesting ? <Loader2 size={16} className="animate-spin" /> : <Calculator size={16} />}
-                  Suggest
-                </button>
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Don't know your HS code? <button onClick={handleSuggestHSCode} className="text-blue-600 hover:underline">Get it classified</button>
-              </p>
-            </div>
-
-            {/* Origin & Destination */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Origin Country <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="origin"
-                  value={formData.origin}
-                  onChange={handleInputChange}
-                  placeholder="e.g., China"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Destination <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="destination"
-                  value={formData.destination}
-                  onChange={handleInputChange}
-                  placeholder="e.g., United States"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Quantity & Weight */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Quantity
-                </label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Weight (kg)
-                </label>
-                <input
-                  type="number"
-                  name="weight"
-                  value={formData.weight}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 5"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Shipping Method */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Shipping Method
-              </label>
-              <div className="relative">
-                <select
-                  name="shippingMethod"
-                  value={formData.shippingMethod}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
-                >
-                  <option value="">Select shipping method</option>
-                  <option value="air">Air Freight</option>
-                  <option value="ocean">Ocean Freight</option>
-                  <option value="road">Road Transport</option>
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={calculateCost}
-              disabled={isCalculating || !formData.value || !formData.weight}
-              className="w-full py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed mt-4"
-            >
-              {isCalculating ? <Loader2 size={20} className="animate-spin" /> : <CalculatorIcon size={20} />}
-              Calculate Landed Cost
-            </button>
-          </div>
-        </div>
+    <div className="flex flex-col h-full font-sans">
+      <div className="flex-none mb-6">
+        <h1 className="text-2xl font-bold text-slate-900">Landed Cost Calculator</h1>
+        <p className="text-slate-500">Accurate import duty & tax estimations powered by live tariff data.</p>
       </div>
 
-      {/* Right Column: Result */}
-      <div className="lg:col-span-5">
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full flex flex-col">
-          {!result ? (
-             <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-               <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 mb-4">
-                 <CalculatorIcon size={32} />
-               </div>
-               <h3 className="text-lg font-medium text-slate-600 mb-2">Ready to Calculate</h3>
-               <p className="text-slate-400 max-w-xs">
-                 Enter product details on the left to calculate the estimated landed cost.
-               </p>
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Form Section */}
+        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
+          <div className="space-y-8">
+             {/* Section 1: Product */}
+             <div>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                   <div className="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center"><Package size={14}/></div>
+                   Product Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                   <div className="md:col-span-2">
+                      <label className="text-xs font-medium text-slate-500 mb-1.5 block">Product Name</label>
+                      <input type="text" name="productName" value={formData.productName} onChange={handleInputChange} placeholder="e.g. Leather Shoes" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm font-medium text-slate-800 placeholder:text-slate-400" />
+                   </div>
+                   <div>
+                      <label className="text-xs font-medium text-slate-500 mb-1.5 block">Value (USD)</label>
+                      <div className="relative">
+                         <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
+                         <input type="number" name="value" value={formData.value} onChange={handleInputChange} placeholder="0.00" className="w-full pl-9 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                      </div>
+                   </div>
+                   <div>
+                      <label className="text-xs font-medium text-slate-500 mb-1.5 block">HS Code</label>
+                      <div className="flex gap-2">
+                         <input type="text" name="hsCode" value={formData.hsCode} onChange={handleInputChange} placeholder="Optional" className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                         <button onClick={handleSuggestHSCode} disabled={isSuggesting} className="px-3 bg-white border border-slate-200 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-50">
+                            {isSuggesting ? <Loader2 size={16} className="animate-spin"/> : <Search size={16}/>}
+                         </button>
+                      </div>
+                   </div>
+                </div>
              </div>
-          ) : (
-            <div className="flex flex-col h-full">
-              <div className="p-6 bg-slate-50 border-b border-slate-100 rounded-t-xl">
-                <h3 className="text-lg font-bold text-slate-800">Landed Cost Breakdown</h3>
-                <p className="text-sm text-slate-500">Estimated total cost for {formData.quantity} unit(s)</p>
-              </div>
-              
-              <div className="flex-1 p-6 overflow-y-auto space-y-6">
-                {/* Main Cost */}
-                <div className="text-center py-6 bg-blue-50 rounded-xl border border-blue-100">
-                  <p className="text-sm font-medium text-blue-600 mb-1">Total Landed Cost</p>
-                  <p className="text-4xl font-bold text-blue-900">${result.totalLandedCost.toFixed(2)}</p>
-                  <p className="text-xs text-blue-400 mt-1">(${(result.totalLandedCost / parseInt(formData.quantity)).toFixed(2)} / unit)</p>
-                </div>
 
-                {/* Details List */}
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded border border-slate-200 text-slate-600"><DollarSign size={16}/></div>
-                      <span className="text-sm font-medium text-slate-700">Product Value</span>
-                    </div>
-                    <span className="font-semibold text-slate-900">${result.productCost.toFixed(2)}</span>
-                  </div>
+             <div className="h-px bg-slate-100 w-full"></div>
 
-                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                     <div className="flex items-center gap-3">
-                       <div className="p-2 bg-white rounded border border-slate-200 text-slate-600">
-                         {formData.shippingMethod === 'air' ? <Plane size={16}/> : formData.shippingMethod === 'ocean' ? <Ship size={16}/> : <Truck size={16}/>}
+             {/* Section 2: Logistics */}
+             <div>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                   <div className="w-6 h-6 rounded bg-orange-100 text-orange-600 flex items-center justify-center"><Truck size={14}/></div>
+                   Logistics
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                   <div>
+                      <label className="text-xs font-medium text-slate-500 mb-1.5 block">Quantity</label>
+                      <input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                   </div>
+                   <div>
+                      <label className="text-xs font-medium text-slate-500 mb-1.5 block">Total Weight (kg)</label>
+                      <input type="number" name="weight" value={formData.weight} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                   </div>
+                   <div>
+                      <label className="text-xs font-medium text-slate-500 mb-1.5 block">Mode</label>
+                      <select name="shippingMethod" value={formData.shippingMethod} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium appearance-none">
+                          <option value="">Select...</option>
+                          <option value="air">Air Freight</option>
+                          <option value="ocean">Ocean Freight</option>
+                          <option value="road">Road Transport</option>
+                      </select>
+                   </div>
+                   <div className="md:col-span-3 grid grid-cols-2 gap-4">
+                       <div className="relative">
+                          <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
+                          <input type="text" name="origin" value={formData.origin} onChange={handleInputChange} placeholder="Origin Country" className="w-full pl-9 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" />
                        </div>
-                       <span className="text-sm font-medium text-slate-700">Shipping & Insurance</span>
-                     </div>
-                     <div className="text-right">
-                       <span className="block font-semibold text-slate-900">${(result.shipping + result.insurance).toFixed(2)}</span>
-                       <span className="text-xs text-slate-400">CIF Total: ${result.cif.toFixed(2)}</span>
-                     </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded border border-slate-200 text-slate-600"><Building size={16}/></div>
-                      <span className="text-sm font-medium text-slate-700">Customs Duties</span>
-                    </div>
-                    <div className="text-right">
-                       <span className="block font-semibold text-slate-900">${(result.basicDuty + result.sws).toFixed(2)}</span>
-                       <span className="text-xs text-slate-400">BCD + SWS</span>
-                     </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded border border-slate-200 text-slate-600"><TrendingUp size={16}/></div>
-                      <span className="text-sm font-medium text-slate-700">Taxes (IGST)</span>
-                    </div>
-                    <span className="font-semibold text-slate-900">${result.igst.toFixed(2)}</span>
-                  </div>
+                       <div className="relative">
+                          <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
+                          <input type="text" name="destination" value={formData.destination} onChange={handleInputChange} placeholder="Destination Country" className="w-full pl-9 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" />
+                       </div>
+                   </div>
                 </div>
+             </div>
+          </div>
 
-                <div className="p-4 bg-amber-50 rounded-lg border border-amber-100 text-xs text-amber-700 flex gap-2 items-start">
-                   <Info size={16} className="shrink-0 mt-0.5" />
-                   <p>This is an estimation based on general duty rates. Actual landed cost may vary based on specific FTA benefits, valuation rules, and exchange rates.</p>
-                </div>
+          <div className="mt-8">
+             <button onClick={calculateCost} disabled={isCalculating || !formData.value} className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                {isCalculating ? <Loader2 className="animate-spin"/> : "Calculate Landed Cost"}
+             </button>
+          </div>
+        </div>
+
+        {/* Results Section */}
+        <div className="lg:col-span-5 h-full">
+           {!result ? (
+              <div className="h-full min-h-[400px] bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-8">
+                  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+                     <Calculator size={40} className="text-slate-300" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-400">Awaiting Input</h3>
+                  <p className="text-sm text-slate-400 mt-2 max-w-xs">Enter product and shipping details to see the cost breakdown.</p>
               </div>
-              
-              <div className="p-4 border-t border-slate-100 bg-slate-50 rounded-b-xl">
-                <button 
-                  onClick={() => setResult(null)}
-                  className="w-full py-2 bg-white border border-slate-300 text-slate-600 font-medium rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
-                >
-                  <RefreshCcw size={16} />
-                  Reset Calculation
-                </button>
+           ) : (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden animate-in slide-in-from-right-4 fade-in duration-500">
+                  {/* Header Card */}
+                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white">
+                     <div className="flex justify-between items-start mb-4">
+                        <div>
+                           <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Landed Cost</p>
+                           <h2 className="text-3xl font-bold mt-1">${result.totalLandedCost.toFixed(2)}</h2>
+                        </div>
+                        <div className="text-right">
+                           <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Per Unit</p>
+                           <p className="text-xl font-bold mt-1">${(result.totalLandedCost / parseInt(formData.quantity)).toFixed(2)}</p>
+                        </div>
+                     </div>
+                     <div className="h-1 w-full bg-slate-700 rounded-full overflow-hidden flex">
+                        {chartData.map((item, i) => (
+                           <div key={i} style={{ width: `${(item.value / result.totalLandedCost) * 100}%`, backgroundColor: item.color }} />
+                        ))}
+                     </div>
+                  </div>
+
+                  <div className="p-6 space-y-6">
+                      {/* Breakdown List */}
+                      <div className="space-y-3">
+                         <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                               <div className="w-2 h-2 rounded-full bg-blue-500"></div> Product Value
+                            </span>
+                            <span className="font-semibold text-slate-900">${result.productCost.toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                               <div className="w-2 h-2 rounded-full bg-amber-500"></div> Freight & Insurance
+                            </span>
+                            <span className="font-semibold text-slate-900">${(result.shipping + result.insurance).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                               <div className="w-2 h-2 rounded-full bg-red-500"></div> Customs Duties
+                            </span>
+                            <span className="font-semibold text-slate-900">${(result.basicDuty + result.sws).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                               <div className="w-2 h-2 rounded-full bg-emerald-500"></div> Taxes (IGST)
+                            </span>
+                            <span className="font-semibold text-slate-900">${result.igst.toFixed(2)}</span>
+                         </div>
+                      </div>
+
+                      {/* Donut Chart */}
+                      <div className="h-40 w-full relative">
+                         <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                               <Pie data={chartData} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value">
+                                  {chartData.map((entry, index) => <Cell key={index} fill={entry.color} strokeWidth={0}/>)}
+                               </Pie>
+                               <RechartsTooltip contentStyle={{borderRadius:'8px', border:'none', boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}/>
+                            </PieChart>
+                         </ResponsiveContainer>
+                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span className="text-xs font-bold text-slate-400">BREAKDOWN</span>
+                         </div>
+                      </div>
+                  </div>
+                  
+                  <div className="bg-slate-50 p-4 text-center border-t border-slate-200">
+                      <button onClick={() => setResult(null)} className="text-sm text-slate-500 hover:text-slate-800 font-medium flex items-center justify-center gap-2 transition-colors">
+                          <RefreshCcw size={14}/> Start New Calculation
+                      </button>
+                  </div>
               </div>
-            </div>
-          )}
+           )}
         </div>
       </div>
-
     </div>
   );
 };
