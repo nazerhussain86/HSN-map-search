@@ -13,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
     { id: 'search', label: 'HSN Search', icon: Search },
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'etl-process', label: 'ETL Process', icon: Database },
-    { id: 'pdf-tools', label: 'PDF Tools', icon: FileText },
+   // { id: 'pdf-tools', label: 'PDF Tools', icon: FileText },
     { id: 'landed-cost', label: 'Landed Cost', icon: Calculator },
     { id: 'ai-assistant', label: 'AI Assistant', icon: MessageSquare },
     { id: 'guide', label: 'About Guide', icon: BookOpen },
