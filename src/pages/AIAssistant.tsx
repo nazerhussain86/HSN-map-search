@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, AlertCircle } from 'lucide-react';
 import { ChatMessage } from '../types';
-import { getGeminiResponse } from '../geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 
 const AIAssistant: React.FC = () => {
   const [input, setInput] = useState('');

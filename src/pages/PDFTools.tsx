@@ -3,14 +3,13 @@ import {
   Minimize2, 
   Scissors, 
   Combine, 
-  ScanText, 
+ 
   UploadCloud, 
   CheckCircle2, 
   Loader2, 
   Trash2, 
   File as FileIcon, 
-  GripVertical,
-  ChevronDown,
+
   Search,
   Diff,
   Crop,
@@ -20,11 +19,9 @@ import {
   Image as ImageIcon,
   Eye,
   AlertCircle,
-  Merge,
-  Settings,
-  PenTool
+  
 } from 'lucide-react';
-import { getGeminiResponse } from '../geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 
 type ToolType = 'merge' | 'split' | 'compress' | 'extract' | 'compare' | 'ocr' | null;
 type FileStatus = 'uploaded' | 'processing' | 'completed' | 'error';
@@ -47,17 +44,11 @@ interface UploadedFile {
   splitFiles?: { name: string; size: string }[];
 }
 
-interface ExtractedField {
-  id: string;
-  label: string;
-  value: string;
-  box: { x: number, y: number, w: number, h: number };
-}
 
 const PDFTools: React.FC = () => {
   const [activeTool, setActiveTool] = useState<ToolType>(null);
   const [files, setFiles] = useState<UploadedFile[]>([]);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [notification, setNotification] = useState<string | null>(null);
   
@@ -207,8 +198,6 @@ const PDFTools: React.FC = () => {
     }, 2000);
   };
 
-  const toggleSelectAll = (checked: boolean) => setFiles(files.map(f => ({ ...f, selected: checked })));
-  const toggleSelectFile = (id: string) => setFiles(files.map(f => f.id === id ? { ...f, selected: !f.selected } : f));
   const updateFileField = (id: string, field: keyof UploadedFile, value: string) => setFiles(files.map(f => f.id === id ? { ...f, [field]: value } : f));
   const filteredFiles = files.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
 

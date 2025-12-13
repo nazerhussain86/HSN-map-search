@@ -1,24 +1,24 @@
 import React from 'react';
-import {  BarChart3, MessageSquare, BookOpen,  X, Calculator,  Workflow, Database, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import {  BarChart3, MessageSquare, BookOpen,  X, Calculator,  Workflow, Database, ChevronLeft, ChevronRight, Search, FileText } from 'lucide-react';
 
 interface SidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;
   isCollapsed: boolean;
   toggleCollapse: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen, setIsMobileOpen, isCollapsed, toggleCollapse }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen, isCollapsed, toggleCollapse }) => {
+  const location = useLocation();
   const menuItems = [
-    //{ id: 'search', label: 'HSN Search', icon: Search },
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'landed-cost', label: 'Landed Cost', icon: Calculator },
-    { id: 'etl-process', label: 'ETL Process', icon: Database },
-    // { id: 'pdf-tools', label: 'PDF Tools', icon: FileText },
-    { id: 'ai-assistant', label: 'AI Assistant', icon: MessageSquare },
-    { id: 'guide', label: 'About Guide', icon: BookOpen },
+    { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'search', path: '/search', label: 'HSN Search', icon: Search },
+    { id: 'landed-cost', path: '/landed-cost', label: 'Landed Cost', icon: Calculator },
+    { id: 'etl-process', path: '/etl-process', label: 'ETL Process', icon: Database },
+    { id: 'pdf-tools', path: '/pdf-tools', label: 'PDF Tools', icon: FileText },
+    { id: 'ai-assistant', path: '/ai-assistant', label: 'AI Assistant', icon: MessageSquare },
+    { id: 'guide', path: '/guide', label: 'About Guide', icon: BookOpen },
   ];
 
   return (
@@ -61,12 +61,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
           <nav className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeTab === item.id;
+              const isActive = location.pathname === item.path;
               return (
-                <button
+                <Link
                   key={item.id}
+                  to={item.path}
                   onClick={() => {
-                    setActiveTab(item.id);
                     setIsMobileOpen(false);
                   }}
                   className={`
@@ -80,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
                 >
                   <Icon size={20} className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'} ${isCollapsed ? '' : 'mr-3'}`} />
                   {!isCollapsed && <span className="truncate">{item.label}</span>}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -96,43 +96,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileOpen
             {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
-
-        {/* <div className="p-4 bg-slate-950 border-t border-slate-800">
-          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
-            <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 text-[10px] font-bold text-slate-300 flex-shrink-0">
-              GOI
-            </div>
-            {!isCollapsed && (
-                <div className="overflow-hidden">
-                  <p className="text-sm font-medium text-white truncate">Govt of India</p>
-                  <p className="text-xs text-slate-400 truncate">DPIIT Initiative</p>
-                </div>
-            )}
-          </div>
-        </div> */}
-
-        {/* <div className="absolute bottom-0 w-full p-6 bg-slate-950 border-t border-slate-800">
-          <div
-            className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-3"
-              }`}
-          >
-            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 text-xs font-bold text-slate-300">
-              GOI
-            </div>
-
-            {!isCollapsed && (
-              <div className="overflow-hidden">
-                <p className="text-sm font-medium text-white truncate">
-                  Govt of India
-                </p>
-                <p className="text-xs text-slate-400 truncate">
-                  DPIIT Initiative
-                </p>
-              </div>
-            )}
-          </div>
-        </div> */}
-
       </aside>
     </>
   );

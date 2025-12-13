@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { 
-  Upload, 
+
   FileText, 
   X, 
   Plus, 
@@ -11,26 +11,23 @@ import {
   CheckCircle2, 
   Loader2, 
   Trash2, 
-  Eye, 
-  MoreVertical, 
+ 
   Image as ImageIcon, 
   ChevronRight, 
   ChevronLeft, 
   Save,
-  Search,
-  Maximize2,
+  
   FileJson,
   Settings,
   Database,
-  Play,
+ 
   UploadCloud,
   Code,
   Table,
-  Files,
-  Split,
-  AlertCircle
+  
 } from 'lucide-react';
-import { getGeminiResponse } from '../geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
+
 import { PDFDocument } from 'pdf-lib';
 
 // Types
