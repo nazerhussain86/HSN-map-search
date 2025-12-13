@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, Download, ChevronLeft, ChevronRight } from 'lucide-react';
-import { HSN_DATA } from '../data';
+import { HSN_DATA } from './data';
 
 const ITEMS_PER_PAGE = 10;
 

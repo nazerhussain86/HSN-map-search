@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
-import SearchPage from '../SearchPage';
+import SearchPage from './SearchPage';
 import Dashboard from './pages/Dashboard';
 import AIAssistant from './pages/AIAssistant';
 import About from './pages/About';
-import LandedCostCalculator from './pages/LandedCostCalculator';
+//import LandedCostCalculator from './pages/LandedCostCalculator';
+import HSNMapping from './pages/HSNMapping';
 //import PDFTools from './pages/PDFTools';
 import ETLProcess from './pages/ETLProcess';
 import { Menu, Workflow } from 'lucide-react';
 
 const App: React.FC = () => {
   // State to manage the active view (simulating routing)
-  const [activeTab, setActiveTab] = useState('search');
+  const [activeTab, setActiveTab] = useState('dashboard');
   
   // State to manage mobile sidebar visibility
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  
+  // State to manage desktop sidebar collapse
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Function to render the correct page component based on activeTab
   const renderContent = () => {
@@ -24,7 +28,7 @@ const App: React.FC = () => {
       case 'dashboard':
         return <Dashboard />;
       case 'landed-cost':
-        return <LandedCostCalculator />;
+        return <HSNMapping />;
       //case 'pdf-tools':
         //return <PDFTools />;
       case 'etl-process':
@@ -46,10 +50,12 @@ const App: React.FC = () => {
         setActiveTab={setActiveTab} 
         isMobileOpen={isMobileOpen}
         setIsMobileOpen={setIsMobileOpen}
+        isCollapsed={isSidebarCollapsed}
+        toggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       {/* Main Content Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 h-full relative">
+      <div className="flex-1 flex flex-col min-w-0 h-full relative transition-all duration-300">
         
         {/* Mobile Header (Visible only on small screens) */}
         <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:hidden flex-shrink-0 z-10 sticky top-0">

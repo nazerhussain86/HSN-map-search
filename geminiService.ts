@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: '' });
 
 export const getGeminiResponse = async (prompt: string, imageBase64?: string, mimeType: string = 'image/jpeg'): Promise<string> => {
   try {
