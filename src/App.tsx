@@ -4,7 +4,7 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Sidebar from '@/components/Sidebar';
 import SearchPage from '@/pages/SearchPage';
 //import Dashboard from '@/pages/Dashboard';
-//import AIAssistant from '@/pages/AIAssistant';
+import AIAssistant from '@/pages/AIAssistant';
 ///import About from '@/pages/About';
 import HSNMapping from '@/pages/HSNMapping';
 //import PDFTools from '@/pages/PDFTools';
@@ -124,7 +124,7 @@ useEffect(() => {
                         <Route path="/landed-cost" element={<HSNMapping />} />
                         {/* <Route path="/pdf-tools" element={<PDFTools />} /> */}
                         <Route path="/etl-process" element={<ETLProcess />} />
-                        {/* <Route path="/ai-assistant" element={<AIAssistant />} /> */}
+                        <Route path="/ai-assistant" element={<AIAssistant />} />
                         {/* <Route path="/guide" element={<About />} /> */}
                         <Route path="/*" element={<Navigate to="/search" />} />
                       </Routes>

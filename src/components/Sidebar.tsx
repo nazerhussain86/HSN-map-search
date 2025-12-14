@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {    X, Calculator,  Workflow, Database, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import {    X, Calculator,  Workflow, Database, ChevronLeft, ChevronRight, Search,MessageSquare } from 'lucide-react';
 //BarChart3, MessageSquare, BookOpen , FileText
 interface SidebarProps {
   isMobileOpen: boolean;
@@ -17,7 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen, isColl
     { id: 'landed-cost', path: '/landed-cost', label: 'Landed Cost', icon: Calculator },
     { id: 'etl-process', path: '/etl-process', label: 'ETL Process', icon: Database },
     // { id: 'pdf-tools', path: '/pdf-tools', label: 'PDF Tools', icon: FileText },
-    // { id: 'ai-assistant', path: '/ai-assistant', label: 'AI Assistant', icon: MessageSquare },
+    { id: 'ai-assistant', path: '/ai-assistant', label: 'AI Assistant', icon: MessageSquare },
     // { id: 'guide', path: '/guide', label: 'About Guide', icon: BookOpen },
   ];
 

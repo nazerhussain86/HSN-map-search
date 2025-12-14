@@ -1,7 +1,9 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: '' });
+const envUsername = import.meta.env.VITE_GEMINI_API_KEY;
+
+const ai = new GoogleGenAI({ apiKey:"" });
 
 export const getGeminiResponse = async (prompt: string, imageBase64?: string, mimeType: string = 'image/jpeg'): Promise<string> => {
   try {
@@ -20,7 +22,7 @@ export const getGeminiResponse = async (prompt: string, imageBase64?: string, mi
     }
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: { parts: contentParts },
       config: {
         temperature: 0.3,
