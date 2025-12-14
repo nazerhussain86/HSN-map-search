@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+   base: '/HSN-map-search/', // 👈 repo name
   define: {
     'process.env': process.env
   },
