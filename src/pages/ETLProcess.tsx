@@ -463,20 +463,20 @@ const ETLProcess: React.FC = () => {
          {/* 2. Toolbar */}
          <div className="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-4 shadow-sm">
             <div className="flex items-center gap-2">
-               <button disabled={!activeTabId} onClick={performExtract} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded hover:bg-emerald-100 text-xs font-medium transition-colors disabled:opacity-50">
+               {/* <button disabled={!activeTabId} onClick={performExtract} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded hover:bg-emerald-100 text-xs font-medium transition-colors disabled:opacity-50">
                   <ScanText size={14}/> Extract Data
-               </button>
+               </button> */}
                <div className="h-5 w-px bg-slate-200 mx-1"></div>
                <button onClick={initiateSplit} disabled={!activeTabId} className="flex items-center gap-1.5 px-3 py-1.5 text-slate-600 hover:bg-slate-100 rounded text-xs font-medium transition-colors disabled:opacity-50">
                   <Scissors size={14}/> Split
                </button>
-               <button disabled={!activeTabId} className="flex items-center gap-1.5 px-3 py-1.5 text-slate-600 hover:bg-slate-100 rounded text-xs font-medium transition-colors disabled:opacity-50">
+               {/* <button disabled={!activeTabId} className="flex items-center gap-1.5 px-3 py-1.5 text-slate-600 hover:bg-slate-100 rounded text-xs font-medium transition-colors disabled:opacity-50">
                   <Minimize2 size={14}/> Compress
-               </button>
+               </button> */}
             </div>
             <div className="flex items-center gap-2 text-slate-400">
                {activeFile && <span className="text-xs">{activeFile.size}</span>}
-               <button className="p-1.5 hover:bg-slate-100 rounded text-slate-500"><Settings size={16}/></button>
+               {/* <button className="p-1.5 hover:bg-slate-100 rounded text-slate-500"><Settings size={16}/></button> */}
             </div>
          </div>
 

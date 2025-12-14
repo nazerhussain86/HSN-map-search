@@ -12,13 +12,13 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen, isCollapsed, toggleCollapse }) => {
   const location = useLocation();
   const menuItems = [
-    { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    // { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'search', path: '/search', label: 'HSN Search', icon: Search },
     { id: 'landed-cost', path: '/landed-cost', label: 'Landed Cost', icon: Calculator },
     { id: 'etl-process', path: '/etl-process', label: 'ETL Process', icon: Database },
-    { id: 'pdf-tools', path: '/pdf-tools', label: 'PDF Tools', icon: FileText },
-    { id: 'ai-assistant', path: '/ai-assistant', label: 'AI Assistant', icon: MessageSquare },
-    { id: 'guide', path: '/guide', label: 'About Guide', icon: BookOpen },
+    // { id: 'pdf-tools', path: '/pdf-tools', label: 'PDF Tools', icon: FileText },
+    // { id: 'ai-assistant', path: '/ai-assistant', label: 'AI Assistant', icon: MessageSquare },
+    // { id: 'guide', path: '/guide', label: 'About Guide', icon: BookOpen },
   ];
 
   return (

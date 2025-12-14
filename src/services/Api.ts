@@ -54,9 +54,29 @@ export interface HSNPayload {
   assessableValue: number;
 }
 
+// export const suggestHSNCode = async (description: string) => {
+//   const response = await api.post("/hsn/suggest", { description });
+//   return response.data;
+// };
+
+import { HSN_DATA } from '../data';
+
 export const suggestHSNCode = async (description: string) => {
-  const response = await api.post("/hsn/suggest", { description });
-  return response.data;
+  if (!description.trim()) return [];
+
+  const keywords = description
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const results = HSN_DATA.filter(item => {
+    const desc = item.description?.toLowerCase() || '';
+
+    // match if ALL keywords exist
+    return keywords.every(word => desc.includes(word));
+  });
+
+  return results;
 };
 
 export const getDutyDetails = async (payload: HSNPayload) => {

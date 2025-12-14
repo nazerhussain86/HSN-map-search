@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate,useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import SearchPage from '@/pages/SearchPage';
 import Dashboard from '@/pages/Dashboard';
@@ -14,19 +14,70 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import CreateAccount from '@/pages/CreateAccount';
 import { Menu, Workflow } from 'lucide-react';
 
+
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  useEffect(() => {
+    const sessionStr = localStorage.getItem('LOGI_FLOW_SESSION');
+
+  if (!sessionStr) return;
+
+  try {
+    const session = JSON.parse(sessionStr);
+
+    if (Date.now() < session.expiresAt) {
+      setIsAuthenticated(true);
+    } else {
+      // ❌ expired
+      localStorage.removeItem('LOGI_FLOW_SESSION');
+      localStorage.removeItem('LAST_ROUTE');
+      setIsAuthenticated(false);
+    }
+  } catch {
+    localStorage.removeItem('LOGI_FLOW_SESSION');
+  }
+  }, []);
+useEffect(() => {
+  const interval = setInterval(() => {
+    const sessionStr = localStorage.getItem('LOGI_FLOW_SESSION');
+    if (!sessionStr) return;
+
+    const session = JSON.parse(sessionStr);
+
+    if (Date.now() > session.expiresAt) {
+      localStorage.removeItem('LOGI_FLOW_SESSION');
+      localStorage.removeItem('LAST_ROUTE');
+      window.location.href = '/login';
+    }
+  }, 30_000); // check every 30 sec
+
+  return () => clearInterval(interval);
+}, []);
+    useEffect(() => {
+    if (isAuthenticated && location.pathname !== '/login') {
+      localStorage.setItem('LAST_ROUTE', location.pathname);
+    }
+  }, [location.pathname, isAuthenticated]);
+
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
-
+  const lastRoute = localStorage.getItem('LAST_ROUTE') || '/search';
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        {/* <Route path="/login" element={<LoginPage onLogin={handleLogin} />} /> */}
+        <Route
+          path="/login"
+          element={
+            isAuthenticated ? <Navigate to={lastRoute} replace /> 
+            : <LoginPage onLogin={handleLogin} />
+          }
+        />
+
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/create-account" element={<CreateAccount />} />
         <Route
@@ -64,10 +115,10 @@ const App: React.FC = () => {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/search" element={<SearchPage />} />
                         <Route path="/landed-cost" element={<HSNMapping />} />
-                        <Route path="/pdf-tools" element={<PDFTools />} />
+                        {/* <Route path="/pdf-tools" element={<PDFTools />} /> */}
                         <Route path="/etl-process" element={<ETLProcess />} />
-                        <Route path="/ai-assistant" element={<AIAssistant />} />
-                        <Route path="/guide" element={<About />} />
+                        {/* <Route path="/ai-assistant" element={<AIAssistant />} /> */}
+                        {/* <Route path="/guide" element={<About />} /> */}
                         <Route path="/*" element={<Navigate to="/dashboard" />} />
                       </Routes>
                     </div>

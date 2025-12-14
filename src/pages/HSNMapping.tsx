@@ -139,10 +139,12 @@ const totalPages = Math.ceil(suggestions.length / rowsPerPage);
 
 
    const handleSelectSuggestion = (row: SuggestionRow) => {
+
+      console.log("Selected Suggestion:", row);
       setFormData(prev => ({
          ...prev,
-         hsnCode: row.HSCode || row.hsnCode || "",
-         description: row.Description || prev.description
+         hsnCode: row.hsCode || row.hsnCode || "",
+         description: row.description || prev.description
       }));
 
       setIsModalOpen(false);
@@ -205,11 +207,11 @@ const totalPages = Math.ceil(suggestions.length / rowsPerPage);
                <div className="space-y-4">
                   <div>
                      <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Product Description</label>
-                     <input
+                     <textarea
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
-                        //rows={3}
+                        rows={3}
                         placeholder="Enter detailed product description..."
                         className="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none shadow-sm transition-all"
                      />
