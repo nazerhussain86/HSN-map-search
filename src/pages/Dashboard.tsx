@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
                 <Bar dataKey="count" fill="url(#colorUv)" radius={[0, 4, 4, 0]} barSize={20}>
-                  {sortedStats.map((entry, index) => (
+                  {sortedStats.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>
@@ -97,7 +97,7 @@ const Dashboard: React.FC = () => {
                   paddingAngle={2}
                   dataKey="count"
                 >
-                  {sortedStats.map((entry, index) => (
+                  {sortedStats.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

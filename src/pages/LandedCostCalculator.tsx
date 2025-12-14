@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { 
   Calculator, 
-  Info, 
   Loader2, 
-  RefreshCcw, 
-  TrendingUp, 
+  RefreshCcw,  
   DollarSign, 
   Truck, 
-  Building, 
-  Plane, 
-  Ship, 
+
   Package,
   MapPin,
-  Scale,
+  
   Search,
-  ArrowRight
+  
 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { getGeminiResponse } from '../geminiService';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import { getGeminiResponse } from '@/services/geminiService';
 
 interface CostBreakdown {
   productCost: number;
