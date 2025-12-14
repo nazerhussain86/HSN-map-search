@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import SearchPage from '@/pages/SearchPage';
-import Dashboard from '@/pages/Dashboard';
+//import Dashboard from '@/pages/Dashboard';
 //import AIAssistant from '@/pages/AIAssistant';
 ///import About from '@/pages/About';
 import HSNMapping from '@/pages/HSNMapping';
@@ -45,22 +45,29 @@ useEffect(() => {
     const sessionStr = localStorage.getItem('LOGI_FLOW_SESSION');
     if (!sessionStr) return;
 
+    const BASE_PATH = '/HSN-map-search/'; 
     const session = JSON.parse(sessionStr);
 
     if (Date.now() > session.expiresAt) {
       localStorage.removeItem('LOGI_FLOW_SESSION');
       localStorage.removeItem('LAST_ROUTE');
-      window.location.href = '/login';
+      window.location.replace(`${BASE_PATH}/#/login`);
     }
   }, 30_000); // check every 30 sec
 
   return () => clearInterval(interval);
 }, []);
     useEffect(() => {
-    if (isAuthenticated && location.pathname !== '/login') {
-      localStorage.setItem('LAST_ROUTE', location.pathname);
-    }
-  }, [location.pathname, isAuthenticated]);
+  if (!isAuthenticated) return;
+
+  // location.hash → "#/search"
+  const currentRoute =
+    location.hash.replace('#', '') || '/search';
+
+  if (currentRoute !== '/login') {
+    localStorage.setItem('LAST_ROUTE', currentRoute);
+  }
+}, [location.hash, isAuthenticated]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -112,14 +119,14 @@ useEffect(() => {
                   <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
                     <div className="max-w-7xl mx-auto w-full h-full pb-10">
                       <Routes>
-                        <Route path="/dashboard" element={<Dashboard />} />
+                        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
                         <Route path="/search" element={<SearchPage />} />
                         <Route path="/landed-cost" element={<HSNMapping />} />
                         {/* <Route path="/pdf-tools" element={<PDFTools />} /> */}
                         <Route path="/etl-process" element={<ETLProcess />} />
                         {/* <Route path="/ai-assistant" element={<AIAssistant />} /> */}
                         {/* <Route path="/guide" element={<About />} /> */}
-                        <Route path="/*" element={<Navigate to="/dashboard" />} />
+                        <Route path="/*" element={<Navigate to="/search" />} />
                       </Routes>
                     </div>
                   </main>

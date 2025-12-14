@@ -34,8 +34,8 @@ const SearchPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">HS Code Directory</h1>
-          <p className="text-slate-500">Search and filter through mapped HSN codes.</p>
+          <h1 className="text-2xl font-bold text-slate-900">HSN Code Directory</h1>
+          <p className="text-slate-500">Search and filter through mapped HSN codes and Description.</p>
         </div>
         <button className="flex items-center px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
           <Download size={16} className="mr-2" />
