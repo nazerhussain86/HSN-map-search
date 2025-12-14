@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, Lock,  Workflow } from 'lucide-react';
+import { User, Lock, Workflow } from 'lucide-react';
 //import { useNavigate } from 'react-router-dom';
 import loginBackground from '@/assets/login-background.jpg';
 import { useNavigate, Link } from 'react-router-dom';
@@ -17,7 +17,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'password') {
+    const envUsername = import.meta.env.VITE_APP_USERNAME;
+    const envPassword = import.meta.env.VITE_APP_PASSWORD;
+
+    if (username === envUsername && password === envPassword) {
       setError('');
       onLogin();
       navigate('/dashboard');
@@ -33,7 +36,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     >
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50"></div>
-  
+
       {/* Login Card */}
       <div className="
         relative z-10 
@@ -55,10 +58,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               LOGI FLOW
             </div>
           </div>
-  
+
           <h2 className="text-2xl font-bold text-gray-900">Sign In</h2>
         </div>
-  
+
         {/* FORM */}
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Username */}
@@ -77,7 +80,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               "
             />
           </div>
-  
+
           {/* Password */}
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -94,17 +97,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               "
             />
           </div>
-  
+
           {/* Remember Me */}
           <div className="text-right">
-                    <Link to="/forgot-password" className="text-sm font-medium text-blue-600 hover:underline">
-                        Forgot Password?
-                    </Link>
-                </div>
-  
+            <Link to="/forgot-password" className="text-sm font-medium text-blue-600 hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+
           {/* Error */}
           {error && <p className="text-sm text-center text-red-600">{error}</p>}
-  
+
           {/* Login Button */}
           <button
             type="submit"
@@ -120,17 +123,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             Log In
           </button>
         </form>
-  
+
         {/* Footer */}
         <div className="text-center pt-2">
-        <Link to="/create-account" className="font-medium text-gray-700 underline underline-offset-4 hover:text-blue-600 text-sm">
-                    Create an account
-                </Link>
+          <Link to="/create-account" className="font-medium text-gray-700 underline underline-offset-4 hover:text-blue-600 text-sm">
+            Create an account
+          </Link>
         </div>
       </div>
     </div>
   );
-  
+
 };
 
 export default LoginPage;
