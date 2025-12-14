@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate,useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import SearchPage from '@/pages/SearchPage';
 import Dashboard from '@/pages/Dashboard';
-import AIAssistant from '@/pages/AIAssistant';
-import About from '@/pages/About';
+//import AIAssistant from '@/pages/AIAssistant';
+///import About from '@/pages/About';
 import HSNMapping from '@/pages/HSNMapping';
-import PDFTools from '@/pages/PDFTools';
+//import PDFTools from '@/pages/PDFTools';
 import ETLProcess from '@/pages/ETLProcess';
 import LoginPage from '@/pages/LoginPage';
 import ForgotPassword from '@/pages/ForgotPassword';

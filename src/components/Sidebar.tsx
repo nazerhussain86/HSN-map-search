@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {  BarChart3, MessageSquare, BookOpen,  X, Calculator,  Workflow, Database, ChevronLeft, ChevronRight, Search, FileText } from 'lucide-react';
-
+import {    X, Calculator,  Workflow, Database, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+//BarChart3, MessageSquare, BookOpen , FileText
 interface SidebarProps {
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;

@@ -6,8 +6,8 @@ import {
   Plus, 
   Combine, 
   Scissors, 
-  Minimize2, 
-  ScanText, 
+//  Minimize2, 
+  //ScanText, 
   CheckCircle2, 
   Loader2, 
   Trash2, 
@@ -18,7 +18,7 @@ import {
   Save,
   
   FileJson,
-  Settings,
+//  Settings,
   Database,
  
   UploadCloud,
@@ -26,7 +26,7 @@ import {
   Table,
   
 } from 'lucide-react';
-import { getGeminiResponse } from '@/services/geminiService';
+//import { getGeminiResponse } from '@/services/geminiService';
 
 import { PDFDocument } from 'pdf-lib';
 
@@ -71,14 +71,14 @@ const ETLProcess: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
+//   const fileToBase64 = (file: File): Promise<string> => {
+//     return new Promise((resolve, reject) => {
+//       const reader = new FileReader();
+//       reader.readAsDataURL(file);
+//       reader.onload = () => resolve(reader.result as string);
+//       reader.onerror = error => reject(error);
+//     });
+//   };
 
   // Handlers
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,34 +326,34 @@ const ETLProcess: React.FC = () => {
     }
   };
 
-  const performExtract = async () => {
-    if (!activeTabId) return;
-    const file = files.find(f => f.id === activeTabId);
-    if (!file) return;
+//   const performExtract = async () => {
+//     if (!activeTabId) return;
+//     const file = files.find(f => f.id === activeTabId);
+//     if (!file) return;
 
-    setProcessingAction('Extracting Data...');
-    setFiles(prev => prev.map(f => f.id === activeTabId ? { ...f, status: 'processing' } : f));
+//     setProcessingAction('Extracting Data...');
+//     setFiles(prev => prev.map(f => f.id === activeTabId ? { ...f, status: 'processing' } : f));
 
-    try {
-      const base64 = await fileToBase64(file.file);
-      const prompt = `Extract key entities from this document (Invoice/Bill/Contract). Return a flat JSON object with keys like 'document_type', 'date', 'total_amount', 'vendor', 'buyer', 'items_summary'.`;
+//     try {
+//       const base64 = await fileToBase64(file.file);
+//       const prompt = `Extract key entities from this document (Invoice/Bill/Contract). Return a flat JSON object with keys like 'document_type', 'date', 'total_amount', 'vendor', 'buyer', 'items_summary'.`;
       
-      const response = await getGeminiResponse(prompt, base64, file.file.type);
-      let jsonRes = { raw: response };
-      try {
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-             jsonRes = JSON.parse(jsonMatch[0]);
-        }
-      } catch (e) { console.log("JSON Parse Error", e); }
+//       const response = await getGeminiResponse(prompt, base64, file.file.type);
+//       let jsonRes = { raw: response };
+//       try {
+//         const jsonMatch = response.match(/\{[\s\S]*\}/);
+//         if (jsonMatch) {
+//              jsonRes = JSON.parse(jsonMatch[0]);
+//         }
+//       } catch (e) { console.log("JSON Parse Error", e); }
 
-      setFiles(prev => prev.map(f => f.id === activeTabId ? { ...f, status: 'completed', extractedData: jsonRes } : f));
-    } catch (e) {
-      setFiles(prev => prev.map(f => f.id === activeTabId ? { ...f, status: 'error' } : f));
-    } finally {
-      setProcessingAction(null);
-    }
-  };
+//       setFiles(prev => prev.map(f => f.id === activeTabId ? { ...f, status: 'completed', extractedData: jsonRes } : f));
+//     } catch (e) {
+//       setFiles(prev => prev.map(f => f.id === activeTabId ? { ...f, status: 'error' } : f));
+//     } finally {
+//       setProcessingAction(null);
+//     }
+//   };
 
   const activeFile = files.find(f => f.id === activeTabId);
 
