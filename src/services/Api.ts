@@ -79,9 +79,44 @@ export const suggestHSNCode = async (description: string) => {
   return results;
 };
 
-export const getDutyDetails = async (payload: HSNPayload) => {
-  const response = await api.post("/hsn/calculate-duty", payload);
-  return response.data;
+// export const getDutyDetails = async (payload: HSNPayload) => {
+//   const response = await api.post("/hsn/calculate-duty", payload);
+//   return response.data;
+// };
+export interface HSNData {
+   assessableValue: number;
+   basicDuty: number;
+   sws: number;
+   igst: number;
+   totalDuty: number;
+   landedCost: number;
+}
+export const getDutyDetails = async (payload: HSNPayload): Promise<HSNData> => {
+    // Simulate API delay
+    await new Promise(r => setTimeout(r, 800));
+    
+    // Logic for calculation
+    // In a real application, this would query a database for specific duty rates by HSN code.
+    // For this dynamic demo, we use standard rates.
+    const cif = payload.amount + payload.freight + payload.insurance + payload.misc;
+    
+    const basicRate = 0.10;
+    const swsRate = 0.10; // 10% of basic
+    const igstRate = 0.18;
+    
+    const basicDuty = cif * basicRate;
+    const sws = basicDuty * swsRate;
+    const igst = (cif + basicDuty + sws) * igstRate;
+    const totalDuty = basicDuty + sws + igst;
+    
+    return {
+        assessableValue: cif,
+        basicDuty,
+        sws,
+        igst,
+        totalDuty,
+        landedCost: cif + totalDuty
+    };
 };
 
 export default api;
