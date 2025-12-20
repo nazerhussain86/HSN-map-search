@@ -21,7 +21,7 @@ import {
   AlertCircle,
   
 } from 'lucide-react';
-import { getGeminiResponse } from '@/services/geminiService';
+//import { getGeminiResponse } from '@/services/geminiService';
 
 type ToolType = 'merge' | 'split' | 'compress' | 'extract' | 'compare' | 'ocr' | null;
 type FileStatus = 'uploaded' | 'processing' | 'completed' | 'error';
@@ -161,16 +161,16 @@ const PDFTools: React.FC = () => {
     setFiles(prev => prev.map(f => f.id === id ? { ...f, status: 'processing' } : f));
 
     if (activeTool === 'extract') {
-      try {
-        const base64 = await fileToBase64(fileToProcess.file);
-        const prompt = `Analyze this ${fileToProcess.docType || 'document'} image/PDF. Extract key fields as a clean JSON object.`;
-        const aiResponse = await getGeminiResponse(prompt, base64, fileToProcess.file.type);
-        let parsedJson;
-        try { parsedJson = JSON.parse(aiResponse.replace(/```json/g, '').replace(/```/g, '').trim()); } catch (e) { parsedJson = { text: aiResponse }; }
-        setFiles(prev => prev.map(f => f.id === id ? { ...f, status: 'completed', jsonResult: parsedJson, result: "Digitized" } : f));
-      } catch (e) {
-        setFiles(prev => prev.map(f => f.id === id ? { ...f, status: 'error', result: 'Failed' } : f));
-      }
+      // try {
+      //   const base64 = await fileToBase64(fileToProcess.file);
+      //   const prompt = `Analyze this ${fileToProcess.docType || 'document'} image/PDF. Extract key fields as a clean JSON object.`;
+      //   const aiResponse = await getGeminiResponse(prompt, base64, fileToProcess.file.type);
+      //   let parsedJson;
+      //   try { parsedJson = JSON.parse(aiResponse.replace(/```json/g, '').replace(/```/g, '').trim()); } catch (e) { parsedJson = { text: aiResponse }; }
+      //   setFiles(prev => prev.map(f => f.id === id ? { ...f, status: 'completed', jsonResult: parsedJson, result: "Digitized" } : f));
+      // } catch (e) {
+      //   setFiles(prev => prev.map(f => f.id === id ? { ...f, status: 'error', result: 'Failed' } : f));
+      // }
     } else if (activeTool === 'split') {
          setTimeout(() => {
           setFiles(prev => prev.map(f => f.id === id ? { 
