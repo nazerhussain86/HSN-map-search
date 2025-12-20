@@ -89,14 +89,14 @@ const PDFTools: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
+  // const fileToBase64 = (file: File): Promise<string> => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => resolve(reader.result as string);
+  //     reader.onerror = error => reject(error);
+  //   });
+  // };
 
   // --- Core Actions ---
   const handleToolSelect = (toolId: ToolType) => {
