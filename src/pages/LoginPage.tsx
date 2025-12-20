@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Lock, Workflow } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import loginBackground from '@/assets/login-background.jpg';
+import { loginUser } from '../services/Api';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -15,30 +16,36 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
 
-    const envUsername = import.meta.env.VITE_APP_USERNAME;
-    const envPassword = import.meta.env.VITE_APP_PASSWORD;
+    try {
+      const res = await loginUser(username, password);
 
-    if (username === envUsername && password === envPassword) {
-      const expiryTime = rememberMe
-        ? Date.now() + 24 * 60 * 60 * 1000   // 1 day
-        : Date.now() + 5 * 60 * 1000;        // 5 minutes
+      if (res.status === 'SUCCESS') {
+        const expiry = rememberMe
+          ? Date.now() + 24 * 60 * 60 * 1000
+          : Date.now() + 5 * 60 * 1000;
 
-      localStorage.setItem(
-        'LOGI_FLOW_SESSION',
-        JSON.stringify({
-          id: crypto.randomUUID(),
-          expiresAt: expiryTime,
-          rememberMe
-        })
-      );
+        localStorage.setItem(
+          'LOGI_FLOW_SESSION',
+          JSON.stringify({
+            username,
+            expiresAt: expiry
+          })
+        );
 
-      onLogin();
-      navigate('/search');
-    } else {
-      setError('Invalid username or password');
+        onLogin();
+
+        navigate(localStorage.getItem('LAST_ROUTE') || '/search', {
+          replace: true
+        });
+      } else {
+        setError(res.message || 'Invalid username or password');
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Invalid username or password');
     }
   };
 
@@ -66,6 +73,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </div>
 
@@ -77,6 +85,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
@@ -86,7 +95,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
             />
-            <span className="text-sm">Remember me (1 day)</span>
+            <span className="text-sm">Remember me</span>
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}

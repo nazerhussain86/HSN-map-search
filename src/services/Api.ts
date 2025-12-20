@@ -1,16 +1,17 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:44320/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  timeout: 120000, // ✅ 2 minutes
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 15000,
 });
 
+// 🔹 Request logger
 api.interceptors.request.use(
   (config) => {
-    console.log("AXIOS REQUEST:", {
+    console.log("📤 AXIOS REQUEST", {
       method: config.method,
       url: `${config.baseURL}${config.url}`,
       data: config.data,
@@ -20,9 +21,10 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// 🔹 Response logger
 api.interceptors.response.use(
   (response) => {
-    console.log("AXIOS RESPONSE:", {
+    console.log("📥 AXIOS RESPONSE", {
       url: `${response.config.baseURL}${response.config.url}`,
       status: response.status,
       data: response.data,
@@ -30,11 +32,11 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error("AXIOS ERROR:", {
+    console.error("❌ AXIOS ERROR", {
       url: error.config
         ? `${error.config.baseURL}${error.config.url}`
-        : "",
-      status: error.response?.status,
+        : "NO_URL",
+      status: error.response?.status ?? "NO_RESPONSE",
       message: error.message,
       data: error.response?.data,
     });
@@ -42,6 +44,41 @@ api.interceptors.response.use(
   }
 );
 
+export const suggestHSNCode = async (description: string) => {
+  const { data } = await api.post("/hsn/suggest", { description });
+  return data;
+};
+
+export const getHSNDetailsFromAI = async (
+  hsnCode: string,
+  description: string
+) => {
+  const { data } = await api.post("/hsn/getDutyDetails", {
+    hsnCode,
+    description,
+  });
+  return data;
+};
+
+export const loginUser = async (
+  username: string,
+  password: string
+) => {
+  const { data } = await api.post("/hsn/login", {
+    username,
+    password
+  });
+  return data;
+};
+
+export interface HSNData {
+   assessableValue: number;
+   basicDuty: number;
+   sws: number;
+   igst: number;
+   totalDuty: number;
+   landedCost: number;
+}
 export interface HSNPayload {
   description: string;
   hsnCode: string;
@@ -52,44 +89,6 @@ export interface HSNPayload {
   insurance: number;
   misc: number;
   assessableValue: number;
-}
-
-// export const suggestHSNCode = async (description: string) => {
-//   const response = await api.post("/hsn/suggest", { description });
-//   return response.data;
-// };
-
-import { HSN_DATA } from '../data';
-
-export const suggestHSNCode = async (description: string) => {
-  if (!description.trim()) return [];
-
-  const keywords = description
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  const results = HSN_DATA.filter(item => {
-    const desc = item.description?.toLowerCase() || '';
-
-    // match if ALL keywords exist
-    return keywords.every(word => desc.includes(word));
-  });
-
-  return results;
-};
-
-// export const getDutyDetails = async (payload: HSNPayload) => {
-//   const response = await api.post("/hsn/calculate-duty", payload);
-//   return response.data;
-// };
-export interface HSNData {
-   assessableValue: number;
-   basicDuty: number;
-   sws: number;
-   igst: number;
-   totalDuty: number;
-   landedCost: number;
 }
 export const getDutyDetails = async (payload: HSNPayload): Promise<HSNData> => {
     // Simulate API delay
@@ -118,5 +117,49 @@ export const getDutyDetails = async (payload: HSNPayload): Promise<HSNData> => {
         landedCost: cif + totalDuty
     };
 };
+
+// export const getGeminiResponse = async (prompt: string, imageBase64?: string, mimeType: string = 'image/jpeg'): Promise<string> => {
+//   try {
+//     let contentParts: any[] = [{ text: prompt }];
+
+//     if (imageBase64) {
+//       // Ensure the base64 string doesn't contain the data URL prefix
+//       const base64Data = imageBase64.split(',')[1] || imageBase64;
+
+//       contentParts.push({
+//         inlineData: {
+//           mimeType: mimeType,
+//           data: base64Data,
+//         },
+//       });
+//     }
+
+//     // const response = await ai.models.generateContent({
+//     //   model: 'gemini-2.5-flash',
+//     //   contents: { parts: contentParts },
+//     //   config: {
+//     //     temperature: 0.3,
+//     //   }
+//     // });
+
+//     return "I'm sorry, I couldn't generate a response.";
+//   } catch (error) {
+//     console.error("Gemini API Error:", error);
+//     throw new Error("Failed to fetch response from AI Assistant.");
+//   }
+// };
+
+export const getGeminiResponse = async (
+  prompt: string,
+  imageBase64?: string
+) => {
+  const { data } = await api.post("hsn/gemini", {
+    prompt,
+    imageBase64
+  });
+
+  return data.data;
+};
+
 
 export default api;

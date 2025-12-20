@@ -17,8 +17,8 @@ import {
    ChevronUp,
    //Info
 } from 'lucide-react';
-import { suggestHSNCode, getDutyDetails, HSNPayload, HSNData } from '../services/Api';
-import { getHSNDetailsFromAI } from '../services/geminiService';
+import { suggestHSNCode, getDutyDetails, HSNPayload, HSNData, getHSNDetailsFromAI } from '../services/Api';
+//import { getHSNDetailsFromAI } from '../services/geminiService';
 interface SuggestionRow {
    [key: string]: any;
    hsnCode: string;
@@ -38,11 +38,13 @@ const HSNMapping: React.FC = () => {
    const fetchHSNFromAI = async () => {
       setLoadingAI(true);
       try {
-         const data = await getHSNDetailsFromAI(
+         const response = await getHSNDetailsFromAI(
             formData.hsnCode,
             formData.description
          );
-         setAiData(data);
+         const aiPayload = response.data.data;
+         setAiData(aiPayload);
+         return aiPayload;
       } finally {
          setLoadingAI(false);
       }
@@ -180,7 +182,9 @@ const HSNMapping: React.FC = () => {
       try {
          // 1️⃣ Call Gemini FIRST
          await fetchHSNFromAI();
+         console.log("AI Data:", aiData);
          // Attempt backend API call
+
          const data = await getDutyDetails(payload);
          setResult(data);
          // Ensure default sections are open

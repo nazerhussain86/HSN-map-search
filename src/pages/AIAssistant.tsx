@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, AlertCircle } from 'lucide-react';
 import { ChatMessage } from '../types';
-import { getGeminiResponse } from '@/services/geminiService';
+import { getGeminiResponse } from '../services/Api';
+import DOMPurify from "dompurify";
 
 const AIAssistant: React.FC = () => {
   const [input, setInput] = useState('');
@@ -113,7 +114,13 @@ const AIAssistant: React.FC = () => {
                 }
               `}>
                 {msg.isError && <AlertCircle size={16} className="mb-2 text-red-500" />}
-                <div className="whitespace-pre-wrap">{msg.text}</div>
+                {/* <div className="whitespace-pre-wrap">{msg.text}</div> */}
+                <div
+  className="prose prose-sm max-w-none"
+  dangerouslySetInnerHTML={{
+    __html: DOMPurify.sanitize(msg.text)
+  }}
+/>
                 <p className={`text-[10px] mt-2 ${msg.role === 'user' ? 'text-blue-200' : 'text-slate-400'}`}>
                   {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
