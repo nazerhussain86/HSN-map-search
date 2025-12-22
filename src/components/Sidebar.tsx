@@ -7,9 +7,10 @@ interface SidebarProps {
   setIsMobileOpen: (open: boolean) => void;
   isCollapsed: boolean;
   toggleCollapse: () => void;
+  onLogout: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen, isCollapsed, toggleCollapse }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen, isCollapsed, toggleCollapse,onLogout }) => {
   const location = useLocation();
   const menuItems = [
     // { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -96,6 +97,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen, isColl
             {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
+        {/* Sign Out */}
+<div className="border-t border-slate-800 p-3">
+  <button
+    onClick={() => {
+      setIsMobileOpen(false);
+      onLogout();
+    }}
+    className={`
+      w-full flex items-center p-3 text-sm font-medium rounded-lg
+      text-red-400 hover:bg-slate-800 hover:text-red-300 transition
+      ${isCollapsed ? 'justify-center' : ''}
+    `}
+  >
+    <span className={`${isCollapsed ? '' : 'mr-3'}`}>⎋</span>
+    {!isCollapsed && <span>Sign Out</span>}
+  </button>
+</div>
+
       </aside>
     </>
   );
