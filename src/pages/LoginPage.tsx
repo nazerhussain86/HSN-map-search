@@ -24,9 +24,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       const res = await loginUser(username, password);
 
       if (res.status === 'SUCCESS') {
-        const expiry = rememberMe
-          ? Date.now() + 24 * 60 * 60 * 1000
-          : Date.now() + 5 * 60 * 1000;
+        var expiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+        if (rememberMe) {
+          // Extend expiry to 7 days if "Remember Me" is checked
+          expiry += 6 * 24 * 60 * 60 * 1000;
+        }
 
         localStorage.setItem(
           'LOGI_FLOW_SESSION',
